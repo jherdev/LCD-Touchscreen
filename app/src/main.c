@@ -27,7 +27,7 @@ int main()
 		GPIOA->ODR ^= GPIO_ODR_5;
 
 		// Wait
-		for(i=0; i<100000; i++);
+		for(i=0; i<1000000; i++);
 	}
 }
 
