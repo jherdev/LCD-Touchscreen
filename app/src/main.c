@@ -5,29 +5,18 @@
  *      Author: Jorge
  */
 #include "stm32f0xx.h"
+#include "bsp.h"
 
 static void SystemClock_Config (void);
 
 int main()
 {
-	uint32_t i;
-
 	SystemClock_Config();		// calls the clock configuration function
-
-	// Start GPIOA clock
-	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-
-	// Configure PA5 as output
-	GPIOA->MODER &= ~GPIO_MODER_MODER5_Msk;
-	GPIOA->MODER |= (0x01 <<GPIO_MODER_MODER5_Pos);
+	LCD_SPI1_Init();
 
 	while(1)
 	{
-		// LED toggle
-		GPIOA->ODR ^= GPIO_ODR_5;
 
-		// Wait
-		for(i=0; i<1000000; i++);
 	}
 }
 
