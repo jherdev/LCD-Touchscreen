@@ -22,31 +22,38 @@ void LCD_SPI1_Init()
 	// Data/Command	-> PC9 (GPIO)
 
 	// Configure PC7 as Chip Select (CS) pin // Configure PC9 as Data/Command (DCX) pin ------------------------------------------------------
+	// Configure PC8 as RESET pin // Configure PC6 as LED Pin --------------------------------------------------------------------------------
 
 	// Start GPIOC clock
 	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;					// this seems to be universal first step, can't "clock" changes if clock isn't running
 
 	// Configure PC7 and PC9 as General Purpose OUTPUT mode register
-	GPIOC->MODER &= ~(GPIO_MODER_MODER7 | GPIO_MODER_MODER9);							// AND with NOT register name, clears the register
-	GPIOC->MODER |= (0x01 << GPIO_MODER_MODER7_Pos) | (0x01 << GPIO_MODER_MODER9_Pos);	// LEFT SHIFT 0x01 (General Purpose Output Mode) for PC7 register
+	GPIOC->MODER &= ~(GPIO_MODER_MODER6 | GPIO_MODER_MODER7 | GPIO_MODER_MODER8 | GPIO_MODER_MODER9);	// AND with NOT register name, clears the register
+	// LEFT SHIFT 0x01 (General Purpose Output Mode)
+	GPIOC->MODER |= (0x01 << GPIO_MODER_MODER6_Pos) | (0x01 << GPIO_MODER_MODER7_Pos) | (0x01 << GPIO_MODER_MODER8_Pos) | (0x01 << GPIO_MODER_MODER9_Pos);
 
-	// Configure PC7 and PC9 as output PUSH-PULL
-	GPIOC->OTYPER &= ~(GPIO_OTYPER_OT_7 | GPIO_OTYPER_OT_9);							// AND with NOT register position, clears it
+	// Configure PC6, PC7, PC8, and PC9 as output PUSH-PULL
+	GPIOC->OTYPER &= ~(GPIO_OTYHPER_OT_6 | GPIO_OTYPER_OT_7 | GPIO_OTYPER_OT_8 | GPIO_OTYPER_OT_9);	// AND with NOT register position, clears it
 	// no need to set it to anything, we want bit set to 0 for Output PUSH-PULL
 
-	// Configure PC7 and PC9 for High Speed I/O output
+	// Configure PC6, PC7, PC8, and PC9 for High Speed I/O output
 	// Low and Medium speeds seem to be for low power modes, and only High Speed can reach 50Mhz clock we're using (i think)
-	GPIOC->OSPEEDR &= ~(GPIO_OSPEEDR_OSPEEDR7 | GPIO_OSPEEDR_OSPEEDR9);				// AND with NOT register name, clears it
-	GPIOC->OSPEEDR |= (0x03 << GPIO_OSPEEDR_OSPEEDR7_Pos) | (0x03 << GPIO_OSPEEDR_OSPEEDR9_Pos);	// LEFT SHIFT 0x03 (11) for HIGH SPEED I/O output
+	GPIOC->OSPEEDR &= ~(GPIO_OSPEEDR_OSPEEDR6 | GPIO_OSPEEDR_OSPEEDR7 | GPIO_OSPEEDR_OSPEEDR8 | GPIO_OSPEEDR_OSPEEDR9);	// AND with NOT register name, clears it
+	// LEFT SHIFT 0x03 (11) for HIGH SPEED I/O output
+	GPIOC->OSPEEDR |= (0x03 << GPIO_OSPEEDR_OSPEEDR6_Pos) | (0x03 << GPIO_OSPEEDR_OSPEEDR7_Pos) | (0x03 << GPIO_OSPEEDR_OSPEEDR8_Pos) | (0x03 << GPIO_OSPEEDR_OSPEEDR9_Pos);
 
-	// Configure PC7 and PC9 for Pull-Up / Pull-Down Registers
+	// Configure PC6, PC7, PC8, and PC9 for Pull-Up / Pull-Down Registers
 	// as an OUTPUT pin, we do NOT need pull-up or pull-down registers
-	GPIOC->PUPDR &= ~(GPIO_PUPDR_PUPDR7 | GPIO_PUPDR_PUPDR9);		// AND with NOT [register name], clears the register
+	GPIOC->PUPDR &= ~(GPIO_PUPDR_PUPDR6 | GPIO_PUPDR_PUPDR7 | GPIO_PUPDR_PUPDR8 | GPIO_PUPDR_PUPDR9);	// AND with NOT [register name], clears the register
 	// not need to set it to anything, 00 gives us No pull-up, pull-down setting
 
-	// Set Chip Select (PC7) to Idle as HIGH
 	// Accessing GPIO output pins using BSRR register performs an atomic bit set/reset
+	// Set Chip Select (PC7) to Idle as HIGH (signal is active low)
 	GPIOC->BSRR |= GPIO_BSRR_BS_7;
+	// Set RESET (PC8) to Idle as HIGH (signal is active low)
+	GPIOC->BSRR |= GPIO_BSRR_BS_8;
+	// Set LED (PC6) to Idle as HIGH (LED ON, can turn off backlight later or connect to PWM to adjust brightness)
+	GPIOC->BSRR |= GPIO_BSRR_BS_6;
 
 	// Configure PA5, PA6, PA7 as SPI1 pins (AF0) // ----------------------------------------------------------------------------------------
 

@@ -23,9 +23,9 @@ int main()
 
 /*
  * 	Clock configuration for the Nucleo STM32F072RB board
- * 	HSE input Bypass Mode 			-> 8MHz
- * 	SYSCLK, AHB, APB1 			-> 48MHz
- *  	PA8 as MCO with /16 prescaler 		-> 3MHz
+ * 	HSE input Bypass Mode 				-> 8MHz
+ * 	SYSCLK, AHB, APB1 					-> 48MHz
+ *  	PA8 as MCO with /16 prescaler 	-> 3MHz
  *
  *  Laurent Latorre - 05/08/2017
  */
