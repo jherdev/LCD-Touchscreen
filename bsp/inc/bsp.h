@@ -13,7 +13,7 @@
 /*
  * LCD SPI Functions
  */
-void LCD_SPI1_Init(void);
+void BSP_SPI1_Init(void);
 
 
 

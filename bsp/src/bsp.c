@@ -13,7 +13,7 @@
  * Initalize GPIO PC7, PC9 for Chip Select and Data/Command
  *
  */
-void LCD_SPI1_Init()
+void BSP_SPI1_Init()
 {
 	// SPI_SCK		-> PA5
 	// SPI_MISO		-> PA6
@@ -33,7 +33,7 @@ void LCD_SPI1_Init()
 	GPIOC->MODER |= (0x01 << GPIO_MODER_MODER6_Pos) | (0x01 << GPIO_MODER_MODER7_Pos) | (0x01 << GPIO_MODER_MODER8_Pos) | (0x01 << GPIO_MODER_MODER9_Pos);
 
 	// Configure PC6, PC7, PC8, and PC9 as output PUSH-PULL
-	GPIOC->OTYPER &= ~(GPIO_OTYHPER_OT_6 | GPIO_OTYPER_OT_7 | GPIO_OTYPER_OT_8 | GPIO_OTYPER_OT_9);	// AND with NOT register position, clears it
+	GPIOC->OTYPER &= ~(GPIO_OTYPER_OT_6 | GPIO_OTYPER_OT_7 | GPIO_OTYPER_OT_8 | GPIO_OTYPER_OT_9);	// AND with NOT register position, clears it
 	// no need to set it to anything, we want bit set to 0 for Output PUSH-PULL
 
 	// Configure PC6, PC7, PC8, and PC9 for High Speed I/O output
