@@ -81,7 +81,8 @@ void BSP_SPI1_Init()
 	SPI1->CR2 = 0x0000;
 
 	// Set the baudrate to 48MHz /128 = 375kHz (slow, but easy to debug)
-	SPI1->CR1 |= 0x06 <<SPI_CR1_BR_Pos;
+	//SPI1->CR1 |= 0x06 << SPI_CR1_BR_Pos;
+	SPI1->CR1 |= 0x00 << SPI_CR1_BR_Pos;		// 48MHz / 2 = 24MHz clock (slow wasn't working)
 
 	// Set data size to 8-bit
 	SPI1->CR2 |= 0x07 <<SPI_CR2_DS_Pos;
