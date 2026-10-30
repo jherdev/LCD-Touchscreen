@@ -14,6 +14,8 @@
 #define LCD_WIDTH		240
 #define LCD_HEIGHT		320
 
+#define POINT_COLOR		0x0000		// black
+
 // Color definitions
 #define TFT_BLACK       0x0000      /*   0,   0,   0 */
 #define TFT_NAVY        0x000F      /*   0,   0, 128 */
@@ -125,8 +127,13 @@ void LCD_WR_DATA_16Bit	(uint16_t data);
 void LCD_Init			(void);
 void LCD_SetWindows		(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
 void LCD_Clear			(uint16_t color);
-
-
+void LCD_DrawPoint		(uint16_t x, uint16_t y);
+void LCD_SetCursor		(uint16_t x_position, uint16_t y_position);
+void LCD_DrawLine		(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
 
 
 #endif /* INC_LCD_H_ */
+
+
+
+

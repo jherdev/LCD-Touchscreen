@@ -13,6 +13,7 @@
 /*
  * Software Counting Delay
  */
-void DELAY_MS(uint32_t delay);
+void DELAY_ms(uint32_t delay);
+void DELAY_us(uint32_t delay);
 
 #endif /* INC_DELAY_H_ */

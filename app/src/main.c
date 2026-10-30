@@ -8,6 +8,7 @@
 #include "bsp.h"
 #include "delay.h"
 #include "lcd.h"
+#include "tictactoe.h"
 
 static void SystemClock_Config (void);
 
@@ -20,6 +21,8 @@ int main()
 	LCD_Init();					// Initialize LCD Screen as per the User Manual
 
 	LCD_Clear(TFT_RED);			// set the entire LCD Screen to red
+	LCD_DrawLine(75, 0, 85, LCD_HEIGHT-1);
+	LCD_DrawLine(155, 0, 165, LCD_HEIGHT-1);
 
 	while(1)
 	{

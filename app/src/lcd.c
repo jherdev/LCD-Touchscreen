@@ -17,13 +17,13 @@ void LCD_Reset(void)
 	GPIOC->BSRR |= GPIO_BSRR_BR_8;
 
 	// delay 100ms
-	DELAY_MS(100);
+	DELAY_ms(100);
 
 	// Set RESET signal HI (active low) - PC8
 	GPIOC->BSRR |= GPIO_BSRR_BS_8;
 
 	//delay 50ms
-	DELAY_MS(50);
+	DELAY_ms(50);
 }
 
 /*
@@ -38,7 +38,8 @@ void LCD_WR_CMD(uint8_t data)
 	GPIOC->BSRR |= GPIO_BSRR_BR_9;
 
 	// Write to SPI1 Buffer
-	SPI1->DR = data;
+	// SPI1->DR = data;
+	*(__IO uint8_t *)&SPI1->DR = data;
 
 	// make sure TXE is set before continuing // TXE = 1, indicating Tx buffer empty
 	while ((SPI1->SR & SPI_SR_TXE_Msk) == 0);
@@ -59,7 +60,8 @@ void LCD_WR_DATA(uint8_t data)
 	GPIOC->BSRR |= GPIO_BSRR_BS_9;
 
 	// Write to SPI1 Buffer
-	SPI1->DR = data;
+	// SPI1->DR = data;
+	*(__IO uint8_t *)&SPI1->DR = data;
 
 	// make sure TXE is set before continuing // TXE = 1, indicating Tx buffer empty
 	while ((SPI1->SR & SPI_SR_TXE_Msk) == 0);
@@ -81,7 +83,9 @@ void LCD_WR_DATA_16Bit(uint16_t data)
 
 	// Write to SPI1 Buffer
 	SPI1->DR = (data >> 8);
+	// *(__IO uint8_t *)&SPI1->DR = (data >> 8);
 	SPI1->DR = data;
+	//*(__IO uint8_t *)&SPI1->DR = data;
 
 	//wait until full transmisssion before continuing
 	// make sure TXE is set before continuing // TXE = 1, indicating Tx buffer empty
@@ -207,7 +211,7 @@ void LCD_Init(void)
 
 	LCD_WR_CMD(0x11); 		//Exit Sleep
 
-	DELAY_MS(120);
+	DELAY_ms(120);
 
 	LCD_WR_CMD(0x29); 		//display on
 }
@@ -264,6 +268,53 @@ void LCD_Clear(uint16_t color)
 	// Set (PC7) Chip Select (CS) - active low // we are done sending command
 	GPIOC->BSRR |= GPIO_BSRR_BS_7;
 }
+
+/*
+ *	color in (black) a pixel data at a specified location
+ */
+void LCD_DrawPoint(uint16_t x, uint16_t y)
+{
+	LCD_SetCursor(x,y);
+	LCD_WR_DATA_16Bit(POINT_COLOR);
+}
+
+/*
+ *	sets coordinate value
+ */
+void LCD_SetCursor(uint16_t x_position, uint16_t y_position)
+{
+	LCD_SetWindows(x_position, y_position, x_position, y_position);
+}
+
+/*
+ * 	draws horizontal line
+ */
+
+void LCD_DrawLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd)
+{
+	uint16_t i,m;
+
+	LCD_SetWindows(xStart, yStart, xEnd, yEnd);
+
+	// Clear (PC7) Chip Select (CS) - active low
+	GPIOC->BSRR |= GPIO_BSRR_BR_7;
+
+	// Set (PC9) D/C (Data/Command) - sending data (1 = data, 0 = command)
+	GPIOC->BSRR |= GPIO_BSRR_BS_9;
+
+	for(i = 0; i < LCD_HEIGHT; i++){
+		for(m = 0; m < ((xEnd - xStart) + 1); m++){
+			LCD_WR_DATA_16Bit(TFT_BLACK);
+		}
+	}
+	// Set (PC7) Chip Select (CS) - active low // we are done sending command
+	GPIOC->BSRR |= GPIO_BSRR_BS_7;
+}
+
+
+
+
+
 
 
 
