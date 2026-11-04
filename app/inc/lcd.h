@@ -131,7 +131,6 @@ void LCD_DrawPoint		(uint16_t x, uint16_t y);
 void LCD_SetCursor		(uint16_t x_position, uint16_t y_position);
 void LCD_DrawFillLine	(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
 void LCD_DrawLine		(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
-void LCD_Direction		(uint8_t orientation);
 
 #endif /* INC_LCD_H_ */
 
