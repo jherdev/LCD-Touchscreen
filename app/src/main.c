@@ -29,7 +29,9 @@ int main()
 	LCD_DrawLine(0, 106, LCD_WIDTH-1, 106);		// Draw line vertically
 	LCD_DrawLine(0, 213, LCD_WIDTH-1, 213);		// Draw line vertically
 
-	//
+	// Draw X
+	LCD_DrawLine(20, 20, 60, 87);
+	LCD_DrawLine(60, 20, 20, 87);
 
 
 	while(1)
