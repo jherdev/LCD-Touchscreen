@@ -290,7 +290,7 @@ void LCD_SetCursor(uint16_t x_position, uint16_t y_position)
  * 	draws horizontal line
  */
 
-void LCD_DrawLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd)
+void LCD_DrawFillLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd)
 {
 	uint16_t i,m;
 
@@ -311,6 +311,81 @@ void LCD_DrawLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd
 	GPIOC->BSRR |= GPIO_BSRR_BS_7;
 }
 
+void LCD_DrawLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd)
+{
+	uint16_t i = 0;
+	int xerr = 0, yerr = 0, delta_x, delta_y, distance;
+	int x_increment, y_increment, uRow, uCol;
+
+	delta_x = xEnd - xStart;	// difference in horizontal value
+	delta_y = yEnd - yStart;		// difference in vertical value
+	uRow = xStart;
+	uCol = yStart;
+
+	////////////////////////////////////////////////////////////////
+
+	if(delta_x > 0)
+	{
+		x_increment = 1;
+	}
+	else if(delta_x == 0)
+	{
+		x_increment = 0;
+	}
+	else
+	{
+		x_increment = -1;
+		delta_x =- delta_x;
+	}
+
+	////////////////////////////////////////////////////////////////
+
+	if(delta_y > 0)
+	{
+		y_increment = 1;
+	}
+	else if(delta_y == 0)
+	{
+		y_increment = 0;
+	}
+	else
+	{
+		y_increment = -1;
+		delta_y =- delta_y;
+	}
+
+	////////////////////////////////////////////////////////////////
+
+	if(delta_x > delta_y)
+	{
+		distance = delta_x;
+	}
+	else
+	{
+		distance = delta_y;
+	}
+
+	////////////////////////////////////////////////////////////////
+
+	for(i = 0; i <= distance + 1; i++)
+	{
+		LCD_DrawPoint(uRow,uCol);
+		xerr += delta_x;
+		yerr += delta_y;
+
+		if(xerr > distance)
+		{
+			xerr -= distance;
+			uRow += x_increment;
+		}
+
+		if(yerr > distance)
+		{
+			yerr -= distance;
+			uCol += y_increment;
+		}
+	}
+}
 
 
 

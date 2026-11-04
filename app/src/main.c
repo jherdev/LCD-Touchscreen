@@ -21,8 +21,16 @@ int main()
 	LCD_Init();					// Initialize LCD Screen as per the User Manual
 
 	LCD_Clear(TFT_RED);			// set the entire LCD Screen to red
-	LCD_DrawLine(75, 0, 85, LCD_HEIGHT-1);
-	LCD_DrawLine(155, 0, 165, LCD_HEIGHT-1);
+
+	// Draw Tic Tac Toe
+	LCD_DrawLine(80, 0, 80, (LCD_HEIGHT-1));		// Draw line horizontally
+	LCD_DrawLine(160, 0, 160, (LCD_HEIGHT-1));	// Draw line horizontally
+
+	LCD_DrawLine(0, 106, LCD_WIDTH-1, 106);		// Draw line vertically
+	LCD_DrawLine(0, 213, LCD_WIDTH-1, 213);		// Draw line vertically
+
+	//
+
 
 	while(1)
 	{
