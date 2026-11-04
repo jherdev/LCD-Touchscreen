@@ -31,8 +31,8 @@ int main()
 
 	// Draw X
 	ttt_DrawX(3,1);
-	ttt_DrawX(2,2);
-	ttt_DrawX(1,3);
+	//ttt_DrawX(2,2);
+	//ttt_DrawX(1,3);
 
 	// Draw O
 

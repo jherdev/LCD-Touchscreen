@@ -289,30 +289,8 @@ void LCD_SetCursor(uint16_t x_position, uint16_t y_position)
 }
 
 /*
- * 	draws horizontal line
+ * 	draws line between two (x,y) coordinates
  */
-
-void LCD_DrawFillLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd)
-{
-	uint16_t i,m;
-
-	LCD_SetWindows(xStart, yStart, xEnd, yEnd);
-
-	// Clear (PC7) Chip Select (CS) - active low
-	GPIOC->BSRR |= GPIO_BSRR_BR_7;
-
-	// Set (PC9) D/C (Data/Command) - sending data (1 = data, 0 = command)
-	GPIOC->BSRR |= GPIO_BSRR_BS_9;
-
-	for(i = 0; i < LCD_HEIGHT; i++){
-		for(m = 0; m < ((xEnd - xStart) + 1); m++){
-			LCD_WR_DATA_16Bit(TFT_BLACK);
-		}
-	}
-	// Set (PC7) Chip Select (CS) - active low // we are done sending command
-	GPIOC->BSRR |= GPIO_BSRR_BS_7;
-}
-
 void LCD_DrawLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd)
 {
 	uint16_t i = 0;
@@ -398,27 +376,23 @@ void LCD_DrawLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd
  */
 void LCD_Direction(uint8_t orientation)
 {
-	//LCD_WR_CMD(TFT_CASET);			// Send Command [Set Column Address]
-	//LCD_WR_CMD(TFT_PASET);			// Send Command [Page Address Set]
-	//LCD_WR_CMD(TFT_RAMWR);			// Send Command [Memory Write] - wramcmd
-
 	switch(orientation)
 	{
 		case 0:
-			LCD_WR_CMD(TFT_MADCTL);						// 0x36 // Memory Access Control
-			LCD_WR_DATA((1<<3)|(0<<6)|(0<<7));			// BGR==1,MY==0,MX==0,MV==0
+			LCD_WR_CMD(TFT_MADCTL);		// 0x36 // Memory Access Control
+			LCD_WR_DATA(TFT_MAD_BGR);	// BGR = 1, MY = 0, MX = 0, MV = 0
 			break;
 		case 1:
 			LCD_WR_CMD(TFT_MADCTL);						// 0x36 // Memory Access Control
-			LCD_WR_DATA((1<<3)|(0<<7)|(1<<6)|(1<<5));	// BGR==1,MY==1,MX==0,MV==1
+			LCD_WR_DATA(TFT_MAD_BGR | TFT_MAD_MX | TFT_MAD_MV); // BGR = 1, MY = 0, MX = 1, MV = 1
 			break;
 		case 2:
 			LCD_WR_CMD(TFT_MADCTL);						// 0x36 // Memory Access Control
-			LCD_WR_DATA((1<<3)|(1<<6)|(1<<7));			// BGR==1,MY==0,MX==0,MV==0
+			LCD_WR_DATA(TFT_MAD_BGR | TFT_MAD_MY | TFT_MAD_MX);	// BGR = 1, MY = 1, MX = 1, MV = 0
 			break;
 		case 3:
 			LCD_WR_CMD(TFT_MADCTL);						// 0x36 // Memory Access Control
-			LCD_WR_DATA((1<<3)|(1<<7)|(1<<5));			// BGR==1,MY==1,MX==0,MV==1
+			LCD_WR_DATA(TFT_MAD_BGR | TFT_MAD_MY | TFT_MAD_MV);	// BGR = 1, MY = 1, MX = 0, MV = 1
 			break;
 	}
 }
