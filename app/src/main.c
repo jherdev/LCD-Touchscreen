@@ -24,14 +24,17 @@ int main()
 
 	// Draw Tic Tac Toe
 	LCD_DrawLine(80, 0, 80, (LCD_HEIGHT-1));		// Draw line horizontally
-	LCD_DrawLine(160, 0, 160, (LCD_HEIGHT-1));	// Draw line horizontally
+	LCD_DrawLine(160, 0, 160, (LCD_HEIGHT-1));		// Draw line horizontally
 
 	LCD_DrawLine(0, 106, LCD_WIDTH-1, 106);		// Draw line vertically
 	LCD_DrawLine(0, 213, LCD_WIDTH-1, 213);		// Draw line vertically
 
 	// Draw X
-	LCD_DrawLine(20, 20, 60, 87);
-	LCD_DrawLine(60, 20, 20, 87);
+	ttt_DrawX(3,1);
+	ttt_DrawX(2,2);
+	ttt_DrawX(1,3);
+
+	// Draw O
 
 
 	while(1)

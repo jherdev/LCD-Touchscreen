@@ -11,7 +11,8 @@
 /*
  * tic tac toe functions
  */
-
+void ttt_DrawX(uint8_t row, uint8_t column);
+void ttt_DrawO(uint8_t row, uint8_t column);
 
 
 #endif /* INC_TICTACTOE_H_ */

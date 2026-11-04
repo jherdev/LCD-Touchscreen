@@ -398,9 +398,9 @@ void LCD_DrawLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd
  */
 void LCD_Direction(uint8_t orientation)
 {
-	LCD_WR_CMD(TFT_CASET);			// Send Command [Set Column Address]
-	LCD_WR_CMD(TFT_PASET);			// Send Command [Page Address Set]
-	LCD_WR_CMD(TFT_RAMWR);			// Send Command [Memory Write] - wramcmd
+	//LCD_WR_CMD(TFT_CASET);			// Send Command [Set Column Address]
+	//LCD_WR_CMD(TFT_PASET);			// Send Command [Page Address Set]
+	//LCD_WR_CMD(TFT_RAMWR);			// Send Command [Memory Write] - wramcmd
 
 	switch(orientation)
 	{
