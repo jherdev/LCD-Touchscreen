@@ -180,7 +180,7 @@ void LCD_Init(void)
 	LCD_WR_DATA(0x00);
 	LCD_WR_DATA(0x00);
 
-	LCD_WR_CMD(0XE1);    	//Set Gamma
+	LCD_WR_CMD(0XE1);    	// Set Gamma
 	LCD_WR_DATA(0x00);
 	LCD_WR_DATA(0x15);
 	LCD_WR_DATA(0x17);
@@ -209,11 +209,13 @@ void LCD_Init(void)
 	LCD_WR_DATA(0x00);
 	LCD_WR_DATA(0xef);
 
-	LCD_WR_CMD(0x11); 		//Exit Sleep
+	LCD_WR_CMD(0x11); 		// Exit Sleep
 
 	DELAY_ms(120);
 
-	LCD_WR_CMD(0x29); 		//display on
+	LCD_WR_CMD(0x29); 		// display on
+
+	LCD_Direction(2);		// 180 degrees
 }
 
 /*
@@ -387,7 +389,39 @@ void LCD_DrawLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd
 	}
 }
 
+/*
+ * Setting the Display Direction of LCD Screen
+ * Direction 	0: 0 Degree
+ * 				1: 90 Degree
+ * 				2: 180 Degree
+ * 				3: 270 Degree
+ */
+void LCD_Direction(uint8_t orientation)
+{
+	LCD_WR_CMD(TFT_CASET);			// Send Command [Set Column Address]
+	LCD_WR_CMD(TFT_PASET);			// Send Command [Page Address Set]
+	LCD_WR_CMD(TFT_RAMWR);			// Send Command [Memory Write] - wramcmd
 
+	switch(orientation)
+	{
+		case 0:
+			LCD_WR_CMD(TFT_MADCTL);						// 0x36 // Memory Access Control
+			LCD_WR_DATA((1<<3)|(0<<6)|(0<<7));			// BGR==1,MY==0,MX==0,MV==0
+			break;
+		case 1:
+			LCD_WR_CMD(TFT_MADCTL);						// 0x36 // Memory Access Control
+			LCD_WR_DATA((1<<3)|(0<<7)|(1<<6)|(1<<5));	// BGR==1,MY==1,MX==0,MV==1
+			break;
+		case 2:
+			LCD_WR_CMD(TFT_MADCTL);						// 0x36 // Memory Access Control
+			LCD_WR_DATA((1<<3)|(1<<6)|(1<<7));			// BGR==1,MY==0,MX==0,MV==0
+			break;
+		case 3:
+			LCD_WR_CMD(TFT_MADCTL);						// 0x36 // Memory Access Control
+			LCD_WR_DATA((1<<3)|(1<<7)|(1<<5));			// BGR==1,MY==1,MX==0,MV==1
+			break;
+	}
+}
 
 
 
