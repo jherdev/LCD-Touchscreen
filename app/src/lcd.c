@@ -220,10 +220,10 @@ void LCD_Init(void)
 
 /*
  * Setting LCD display window
- * xStart: beginning of x coordinate of the LCD display window
- * yStart: beginning of y coordinate of the LCD display window
- * xEnd: ending of the x coordinate of the LCD Display window
- * yEnd: ending of the y coodinate of the LCD Display window
+ * xStart: 	beginning of x coordinate of the LCD display window
+ * yStart: 	beginning of y coordinate of the LCD display window
+ * xEnd: 	ending of the x coordinate of the LCD Display window
+ * yEnd: 	ending of the y coordinate of the LCD Display window
  */
 void LCD_SetWindows(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd)
 {
@@ -274,10 +274,10 @@ void LCD_Clear(uint16_t color)
 /*
  *	color in (black) a pixel data at a specified location
  */
-void LCD_DrawPoint(uint16_t x, uint16_t y)
+void LCD_DrawPoint(uint16_t x, uint16_t y, uint16_t color)
 {
 	LCD_SetCursor(x,y);
-	LCD_WR_DATA_16Bit(POINT_COLOR);
+	LCD_WR_DATA_16Bit(color);
 }
 
 /*
@@ -349,7 +349,7 @@ void LCD_DrawLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd
 
 	for(i = 0; i <= distance + 1; i++)
 	{
-		LCD_DrawPoint(uRow,uCol);
+		LCD_DrawPoint(uRow, uCol, TFT_BLACK);
 		xerr += delta_x;
 		yerr += delta_y;
 
@@ -368,6 +368,76 @@ void LCD_DrawLine(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd
 }
 
 /*
+ * draws circle
+ * 		xOrigin:	x coordinate of circular center
+ * 		yOrigin:	y coordinate of circular center
+ * 		radius:		radius of circle
+ * 		fill:		true - fill in circle, false - no filling
+ * 		color:		color of filled in circle
+ */
+void LCD_DrawFillCircle(int xOrigin, int yOrigin, uint16_t radius, bool fill, uint16_t color)
+{
+	int x = 0, i, d;
+	int y = radius;
+	d = 3 - 2 * radius;
+
+	if(fill)
+	{
+		while(x <= y)
+		{
+			for(i = x; i < y; i++)
+			{
+				LCD_DrawCircle(xOrigin, yOrigin, x, i, color);
+			}
+
+			if (d < 0)
+			{
+				d = d + 4 * x + 6;
+			}
+			else
+			{
+				d = d + 4 * (x - y) + 10;
+				y--;
+			}
+			x++;
+		}
+	}
+	else
+	{
+		while (x <= y)
+		{
+			LCD_DrawCircle(xOrigin, yOrigin, x, y, color);
+
+			if (d < 0)
+			{
+				d = d + 4 * x + 6;
+			}
+			else
+			{
+				d = d + 4 * (x - y) + 10;
+				y--;
+			}
+			x++;
+		}
+	}
+
+
+}
+
+
+void LCD_DrawCircle(int xOrigin, int yOrigin, int x, int y, uint16_t color)
+{
+	LCD_DrawPoint(xOrigin + x, yOrigin + y, color);	// + +
+	LCD_DrawPoint(xOrigin - x, yOrigin + y, color); // - +
+	LCD_DrawPoint(xOrigin + x, yOrigin - y, color); // + -
+	LCD_DrawPoint(xOrigin - x, yOrigin - y, color); // - -
+	LCD_DrawPoint(xOrigin + y, yOrigin + x, color); //
+	LCD_DrawPoint(xOrigin - y, yOrigin + x, color);
+	LCD_DrawPoint(xOrigin + y, yOrigin - x, color);
+	LCD_DrawPoint(xOrigin - y, yOrigin - x, color);
+}
+
+/*
  * Setting the Display Direction of LCD Screen
  * Direction 	0: 0 Degree
  * 				1: 90 Degree
@@ -383,15 +453,15 @@ void LCD_Direction(uint8_t orientation)
 			LCD_WR_DATA(TFT_MAD_BGR);	// BGR = 1, MY = 0, MX = 0, MV = 0
 			break;
 		case 1:
-			LCD_WR_CMD(TFT_MADCTL);						// 0x36 // Memory Access Control
+			LCD_WR_CMD(TFT_MADCTL);		// 0x36 // Memory Access Control
 			LCD_WR_DATA(TFT_MAD_BGR | TFT_MAD_MX | TFT_MAD_MV); // BGR = 1, MY = 0, MX = 1, MV = 1
 			break;
 		case 2:
-			LCD_WR_CMD(TFT_MADCTL);						// 0x36 // Memory Access Control
+			LCD_WR_CMD(TFT_MADCTL);		// 0x36 // Memory Access Control
 			LCD_WR_DATA(TFT_MAD_BGR | TFT_MAD_MY | TFT_MAD_MX);	// BGR = 1, MY = 1, MX = 1, MV = 0
 			break;
 		case 3:
-			LCD_WR_CMD(TFT_MADCTL);						// 0x36 // Memory Access Control
+			LCD_WR_CMD(TFT_MADCTL);		// 0x36 // Memory Access Control
 			LCD_WR_DATA(TFT_MAD_BGR | TFT_MAD_MY | TFT_MAD_MV);	// BGR = 1, MY = 1, MX = 0, MV = 1
 			break;
 	}

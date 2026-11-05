@@ -66,7 +66,42 @@ void ttt_DrawX(uint8_t row, uint8_t column)
  */
 void ttt_DrawO(uint8_t row, uint8_t column)
 {
+	uint16_t xOrigin, yOrigin;
+	uint16_t radius = 29;
 
+	switch(row)
+	{
+		case 1:
+			xOrigin = 200;
+			break;
+		case 2:
+			xOrigin = 120;
+			break;
+		case 3:
+			xOrigin = 40;
+			break;
+		default:
+			break;
+	}
+
+	switch(column)
+	{
+		case 1:
+			yOrigin = 53;
+			break;
+		case 2:
+			yOrigin = 159;
+			break;
+		case 3:
+			yOrigin = 265;
+			break;
+		default:
+			break;
+	}
+
+	LCD_DrawFillCircle(xOrigin, yOrigin, radius, false, TFT_BLACK);
+	LCD_DrawFillCircle(xOrigin, yOrigin, radius+1, false, TFT_BLACK);
+	LCD_DrawFillCircle(xOrigin, yOrigin, radius+2, false, TFT_BLACK);
 }
 
 

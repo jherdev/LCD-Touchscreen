@@ -8,6 +8,7 @@
 #ifndef INC_LCD_H_
 #define INC_LCD_H_
 
+#include <stdbool.h>
 #include "stm32f0xx.h"
 
 // Parameters
@@ -127,9 +128,11 @@ void LCD_WR_DATA_16Bit	(uint16_t data);
 void LCD_Init			(void);
 void LCD_SetWindows		(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
 void LCD_Clear			(uint16_t color);
-void LCD_DrawPoint		(uint16_t x, uint16_t y);
+void LCD_DrawPoint		(uint16_t x, uint16_t y, uint16_t color);
 void LCD_SetCursor		(uint16_t x_position, uint16_t y_position);
 void LCD_DrawLine		(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
+void LCD_DrawFillCircle	(int xOrigin, int yOrigin, uint16_t radius, bool fill, uint16_t color);
+void LCD_DrawCircle		(int xOrigin, int yOrigin, int x, int y, uint16_t color);
 void LCD_Direction		(uint8_t orientation);
 
 

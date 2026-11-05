@@ -35,7 +35,7 @@ int main()
 	//ttt_DrawX(1,3);
 
 	// Draw O
-
+	ttt_DrawO(1,3);
 
 	while(1)
 	{
