@@ -4,9 +4,10 @@
  *  Created on: July 28, 2026
  *      Author: Jorge
  */
-#include <stdio.h>
+//#include <stdio.h>
 
 #include "stm32f0xx.h"
+#include "main.h"
 #include "bsp.h"
 #include "delay.h"
 #include "lcd.h"
@@ -17,8 +18,12 @@ static void SystemClock_Config (void);
 
 int main()
 {
+	uint8_t x, y = 0;
+
 	SystemClock_Config();		// calls the clock configuration function
 	BSP_SPI1_Init();			// configure SPI1 for LCD Screen
+	BSP_SPI2_Init();
+	BSP_Console_Init();			// initialize debug console
 
 	LCD_Reset();				// Reset LCD Screen
 	LCD_Init();					// Initialize LCD Screen as per the User Manual
@@ -42,8 +47,10 @@ int main()
 
 	while(1)
 	{
-		printf("x coordinate: %d", TS_ReadCoordinate(TS_READ_X8));
-		DELAY_ms(1);
+		x = TS_SendReceive(TS_CMD_X8);
+		y = TS_SendReceive(TS_CMD_Y8);
+		my_printf("X: %d, Y: %d\r\n", x, y);
+		DELAY_ms(500);
 	}
 }
 
@@ -55,7 +62,6 @@ int main()
  *
  *  Laurent Latorre - 05/08/2017
  */
-
 static void SystemClock_Config()
 {
 	uint32_t	HSE_Status;

@@ -10,7 +10,7 @@
 /*
  * 	ReadCoordinate - reads coordinate x or y depending on parameter
  */
-uint8_t TS_ReadCoordinate(uint8_t tx_byte)
+uint8_t TS_SendReceive(uint8_t tx_byte)
 {
 	uint8_t rx_byte = 0;
 

@@ -11,10 +11,18 @@
 #include "stm32f0xx.h"
 
 /*
- * LCD SPI Functions
+ *	LCD SPI Functions
  */
 void BSP_SPI1_Init(void);
 
+/*
+ * 	Touch Screen SPI functions
+ */
+void BSP_SPI2_Init(void);
 
+/*
+ * 	UART Console Initalization
+ */
+void BSP_Console_Init(void);
 
 #endif /* INC_BSP_H_ */
