@@ -4,11 +4,14 @@
  *  Created on: July 28, 2026
  *      Author: Jorge
  */
+#include <stdio.h>
+
 #include "stm32f0xx.h"
 #include "bsp.h"
 #include "delay.h"
 #include "lcd.h"
 #include "tictactoe.h"
+#include "touch.h"
 
 static void SystemClock_Config (void);
 
@@ -39,7 +42,8 @@ int main()
 
 	while(1)
 	{
-
+		printf("x coordinate: %d", TS_ReadCoordinate(TS_READ_X8));
+		DELAY_ms(1);
 	}
 }
 

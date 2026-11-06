@@ -125,7 +125,7 @@ void BSP_SPI2_Init()
 	// Configure PB12 for High Speed I/O output
 	GPIOB->OSPEEDR &= ~GPIO_OSPEEDR_OSPEEDR12;
 	// Left shift 0x03(11) for High Speed I/O Output
-	GPIOB->OSPEED |= (0x03 << GPIO_OSPEEDR_OSPEEDR12_Pos);
+	GPIOB->OSPEEDR |= (0x03 << GPIO_OSPEEDR_OSPEEDR12_Pos);
 
 	// Configure PB12 for Pull Up / Pull Down Registers
 	GPIOB->PUPDR &= ~GPIO_PUPDR_PUPDR12;
@@ -141,8 +141,8 @@ void BSP_SPI2_Init()
 
 	// Connect to SPI1 (AF0)
 	// There are no GPIOx_AFRL or GPIOx_AFRH registers, they are seperated into GPIOx_AFR[0] for 0-7 and GPIOx_FR[1] for 8-15
-	GPIOB->AFR[1] &= ~(GPIO_AFRL_AFSEL13 | GPIO_AFRL_AFSEL14 | GPIO_AFRL_AFSEL15);
-	GPIOB->AFR[1] |= (0x00 << GPIO_AFRL_AFSEL13_Pos) | (0x00 << GPIO_AFRL_AFSEL14_Pos) | (0x00 << GPIO_AFRL_AFSEL15_Pos);
+	GPIOB->AFR[1] &= ~(GPIO_AFRH_AFSEL13 | GPIO_AFRH_AFSEL14 | GPIO_AFRH_AFSEL15);
+	GPIOB->AFR[1] |= (0x00 << GPIO_AFRH_AFSEL13_Pos) | (0x00 << GPIO_AFRH_AFSEL14_Pos) | (0x00 << GPIO_AFRH_AFSEL15_Pos);
 
 	// Enable SPI2 Clock
 	RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
@@ -159,6 +159,9 @@ void BSP_SPI2_Init()
 
 	// Set data size to 8-bit
 	SPI2->CR2 |= 0x07 <<SPI_CR2_DS_Pos;
+
+	// Set FIFO threshold to 1-byte
+	SPI2->CR2 |= SPI_CR2_FRXTH;		// 1: event generated if FIFO is >= 8 bit
 
 	// Set as master (SSI must be high), with software managed NSS
 	SPI2->CR1 |= SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM;
