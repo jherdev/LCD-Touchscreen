@@ -8,7 +8,8 @@
 #include "bsp.h"
 
 /*
- * LCD_SPI1_Init()
+ * BSP_SPI1_Init()
+ * Initialization for LCD Screen
  * Initalize SPI1 on PA5, PA6, PA7 @ 375 kHz
  * Initalize GPIO PC7, PC9 for Chip Select and Data/Command
  *
@@ -94,6 +95,77 @@ void BSP_SPI1_Init()
 	SPI1->CR1 |= SPI_CR1_SPE;
 }
 
+/*
+ *	BSP_SPI2_Init()
+ *	Initalization for Touch Screen SPI
+ *	Initialize SPI2 on PB12, PB13, PB14, PB15
+ */
+void BSP_SPI2_Init()
+{
+/*
+ * 	SPI2 CS 	-> PB12	// Configure as GPIO
+ * 	SPI2 SCK	-> PB13
+ * 	SPI2 MISO	-> PB14
+ * 	SPI2 MOSI	-> PB15
+ */
+
+	// Configure GPIO CS PB12
+	// Start GPIOB clock
+	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
+
+	// Configure PB12 as PGIO Register
+	GPIOB->MODER &= ~GPIO_MODER_MODER12;
+
+	// Left Shift 0x01 (General Purpose Output Mode)
+	GPIOB->MODER |= (0x01 << GPIO_MODER_MODER12_Pos);
+
+	// Configure PB12 as output PUSH-PULL
+	GPIOB->OTYPER &= ~GPIO_OTYPER_OT_12;
+
+	// Configure PB12 for High Speed I/O output
+	GPIOB->OSPEEDR &= ~GPIO_OSPEEDR_OSPEEDR12;
+	// Left shift 0x03(11) for High Speed I/O Output
+	GPIOB->OSPEED |= (0x03 << GPIO_OSPEEDR_OSPEEDR12_Pos);
+
+	// Configure PB12 for Pull Up / Pull Down Registers
+	GPIOB->PUPDR &= ~GPIO_PUPDR_PUPDR12;
+
+	// Atomic Set/Reset // Set CS Idle to High (Signal is active LOW)
+	GPIOB->BSRR |= GPIO_BSRR_BS_12;
+
+	// Configure PB13, PB14, PB15 as SPI2 pins (AF0)
+
+	// Configure PB13, PB14 and PB15 as AF mode
+	GPIOB->MODER &= ~(GPIO_MODER_MODER13 | GPIO_MODER_MODER14 | GPIO_MODER_MODER15);
+	GPIOB->MODER |= (0x02 << GPIO_MODER_MODER13_Pos) | (0x02 << GPIO_MODER_MODER14_Pos) | (0x02 << GPIO_MODER_MODER15_Pos);
+
+	// Connect to SPI1 (AF0)
+	// There are no GPIOx_AFRL or GPIOx_AFRH registers, they are seperated into GPIOx_AFR[0] for 0-7 and GPIOx_FR[1] for 8-15
+	GPIOB->AFR[1] &= ~(GPIO_AFRL_AFSEL13 | GPIO_AFRL_AFSEL14 | GPIO_AFRL_AFSEL15);
+	GPIOB->AFR[1] |= (0x00 << GPIO_AFRL_AFSEL13_Pos) | (0x00 << GPIO_AFRL_AFSEL14_Pos) | (0x00 << GPIO_AFRL_AFSEL15_Pos);
+
+	// Enable SPI2 Clock
+	RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+
+	// Configure SPI with default config
+	// 4-wire = full-duplex (MISO/MOSI on separated lines)
+	// 8-bit, no CRC, MSB first
+	// CPHA = 0, CPOL = 0 -> SPI mode 0 (first clock rising edge)
+	SPI2->CR1 = 0x0000;
+	SPI2->CR2 = 0x0000;
+
+	// Set the baudrate to 48MHz / 2 = 24MHz clock
+	SPI2->CR1 |= 0x00 << SPI_CR1_BR_Pos;
+
+	// Set data size to 8-bit
+	SPI2->CR2 |= 0x07 <<SPI_CR2_DS_Pos;
+
+	// Set as master (SSI must be high), with software managed NSS
+	SPI2->CR1 |= SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM;
+
+	// Enable SPI2
+	SPI2->CR1 |= SPI_CR1_SPE;
+}
 
 
 
