@@ -49,7 +49,7 @@ int main()
 
 	while(1)
 	{
-		if((GPIOB->IDR & GPIO_IDR_11) == 0)
+		if(TouchScreenPressed())
 		{
 			x = TS_SendReceive(TS_CMD_X);
 			y = TS_SendReceive(TS_CMD_Y);

@@ -8,6 +8,7 @@
 #ifndef INC_TOUCH_H_
 #define INC_TOUCH_H_
 
+#include <stdbool.h>
 #include "stm32f0xx.h"
 
 #define	TS_CMD_X			0xD0	// 12-bit Read x coordinate
@@ -18,6 +19,7 @@
 /*
  * 	Touch Screen Functions
  */
-uint16_t TS_SendReceive(uint8_t tx_byte);
+uint16_t 	TS_SendReceive		(uint8_t tx_byte);
+bool		TouchScreenPressed	(void);
 
 #endif /* INC_TOUCH_H_ */

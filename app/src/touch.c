@@ -79,3 +79,16 @@ uint16_t TS_SendReceive(uint8_t tx_byte)
 
 	return result;
 }
+
+/*
+ * 	TouchScreenPressed - returns TRUE if touch screen is pressed, FALSE if not
+ * 							uses T_IRQ line (active low) to check
+ */
+bool TouchScreenPressed(void)
+{
+	if((GPIOB->IDR & GPIO_IDR_11) == 0)
+	{
+		return true;
+	}
+	return false;
+}
