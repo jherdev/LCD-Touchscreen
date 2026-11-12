@@ -104,7 +104,18 @@ void ttt_DrawO(uint8_t row, uint8_t column)
 	LCD_DrawFillCircle(xOrigin, yOrigin, radius+2, false, TFT_BLACK);
 }
 
+/*
+ * 	Draws two horizontal lines and two vertical lines to create the tic tac toe grid
+ */
+void ttt_DrawGrid(void)
+{
+	// Draw Tic Tac Toe
+	LCD_DrawLine(80, 0, 80, (LCD_HEIGHT-1));		// Draw line horizontally
+	LCD_DrawLine(160, 0, 160, (LCD_HEIGHT-1));		// Draw line horizontally
 
+	LCD_DrawLine(0, 106, LCD_WIDTH-1, 106);			// Draw line vertically
+	LCD_DrawLine(0, 213, LCD_WIDTH-1, 213);			// Draw line vertically
+}
 
 
 
