@@ -109,11 +109,11 @@ void BSP_SPI2_Init()
  * 	SPI2 MOSI	-> PB15
  */
 
-	// Configure GPIO CS PB12
+	// Configure GPIO Chip Select PB12
 	// Start GPIOB clock
 	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 
-	// Configure PB12 as PGIO Register
+	// Configure PB12 as GPIO Register
 	GPIOB->MODER &= ~GPIO_MODER_MODER12;
 
 	// Left Shift 0x01 (General Purpose Output Mode)
@@ -133,7 +133,18 @@ void BSP_SPI2_Init()
 	// Atomic Set/Reset // Set CS Idle to High (Signal is active LOW)
 	GPIOB->BSRR |= GPIO_BSRR_BS_12;
 
-	// Configure PB13, PB14, PB15 as SPI2 pins (AF0)
+	// Configure GPIO IRQ for PB11	///////////////////////////////////////////////////////////////////////////////////////
+
+	// Configure PB11 as a GPIO Register
+	GPIOB->MODER &= ~GPIO_MODER_MODER11;
+
+	// Left Shift 0x00 (Input Mode (reset state))
+	GPIOB->MODER |= (0x00 << GPIO_MODER_MODER11_Pos);
+
+	// Configure PB11 for Pull Up Register
+	GPIOB->PUPDR |= (0x01 << GPIO_PUPDR_PUPDR11_Pos);
+
+	// Configure PB13, PB14, PB15 as SPI2 pins (AF0)	///////////////////////////////////////////////////////////////////
 
 	// Configure PB13, PB14 and PB15 as AF mode
 	GPIOB->MODER &= ~(GPIO_MODER_MODER13 | GPIO_MODER_MODER14 | GPIO_MODER_MODER15);

@@ -15,8 +15,7 @@ uint16_t TS_SendReceive(uint8_t tx_byte)
 	uint8_t discard = 0;
 	uint8_t rx_byte = 0;
 	uint8_t temp = 0;
-
-
+	uint16_t result = 0;
 
 	// Select Slave (CS -> Low)
 	GPIOB->BSRR |= GPIO_BSRR_BR_12;
@@ -75,7 +74,8 @@ uint16_t TS_SendReceive(uint8_t tx_byte)
 	// Release slave (CS -> High)
 	GPIOB->BSRR |= GPIO_BSRR_BS_12;
 
-	uint16_t result = (((uint16_t)rx_byte << 8) | temp) >> 3;   // 12-bit value, 0-4095
+	result = rx_byte << 4;
+	result |= (temp >> 4);
 
 	return result;
 }
