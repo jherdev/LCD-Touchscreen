@@ -18,6 +18,6 @@
 /*
  * 	Touch Screen Functions
  */
-uint8_t TS_SendReceive(uint8_t tx_byte);
+uint16_t TS_SendReceive(uint8_t tx_byte);
 
 #endif /* INC_TOUCH_H_ */

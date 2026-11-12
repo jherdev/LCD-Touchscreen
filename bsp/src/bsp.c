@@ -139,7 +139,7 @@ void BSP_SPI2_Init()
 	GPIOB->MODER &= ~(GPIO_MODER_MODER13 | GPIO_MODER_MODER14 | GPIO_MODER_MODER15);
 	GPIOB->MODER |= (0x02 << GPIO_MODER_MODER13_Pos) | (0x02 << GPIO_MODER_MODER14_Pos) | (0x02 << GPIO_MODER_MODER15_Pos);
 
-	// Connect to SPI1 (AF0)
+	// Connect to SPI2 (AF0)
 	// There are no GPIOx_AFRL or GPIOx_AFRH registers, they are seperated into GPIOx_AFR[0] for 0-7 and GPIOx_FR[1] for 8-15
 	GPIOB->AFR[1] &= ~(GPIO_AFRH_AFSEL13 | GPIO_AFRH_AFSEL14 | GPIO_AFRH_AFSEL15);
 	GPIOB->AFR[1] |= (0x00 << GPIO_AFRH_AFSEL13_Pos) | (0x00 << GPIO_AFRH_AFSEL14_Pos) | (0x00 << GPIO_AFRH_AFSEL15_Pos);
@@ -155,13 +155,16 @@ void BSP_SPI2_Init()
 	SPI2->CR2 = 0x0000;
 
 	// Set the baudrate to 48MHz / 2 = 24MHz clock
-	SPI2->CR1 |= 0x00 << SPI_CR1_BR_Pos;
+	// SPI2->CR1 |= 0x00 << SPI_CR1_BR_Pos;
+	// Set the baudrate to 48MHz /256 = 187KHz (slow, but easy to debug)
+	SPI2->CR1 |= 0x07 <<SPI_CR1_BR_Pos;
 
 	// Set data size to 8-bit
 	SPI2->CR2 |= 0x07 <<SPI_CR2_DS_Pos;
 
 	// Set FIFO threshold to 1-byte
 	SPI2->CR2 |= SPI_CR2_FRXTH;		// 1: event generated if FIFO is >= 8 bit
+	// 									// 0: event generated if FIFO is >= 16 bit
 
 	// Set as master (SSI must be high), with software managed NSS
 	SPI2->CR1 |= SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM;

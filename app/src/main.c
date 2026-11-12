@@ -18,7 +18,7 @@ static void SystemClock_Config (void);
 
 int main()
 {
-	uint8_t x, y = 0;
+	uint16_t x, y = 0;
 
 	SystemClock_Config();		// calls the clock configuration function
 	BSP_SPI1_Init();			// configure SPI1 for LCD Screen
@@ -47,8 +47,17 @@ int main()
 
 	while(1)
 	{
-		x = TS_SendReceive(TS_CMD_X8);
-		y = TS_SendReceive(TS_CMD_Y8);
+		// Select Slave (CS -> Low)
+		//GPIOB->BSRR |= GPIO_BSRR_BR_12;
+
+		x = TS_SendReceive(TS_CMD_X);
+		//x = TS_SendReceive(0x00);		// dummy bytes to read back DOUT result
+		y = TS_SendReceive(TS_CMD_Y);
+		//y = TS_SendReceive(0x00);
+
+		// Release slave (CS -> High)
+		//GPIOB->BSRR |= GPIO_BSRR_BS_12;
+
 		my_printf("X: %d, Y: %d\r\n", x, y);
 		DELAY_ms(500);
 	}

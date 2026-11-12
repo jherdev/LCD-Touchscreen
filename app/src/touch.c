@@ -10,27 +10,72 @@
 /*
  * 	ReadCoordinate - reads coordinate x or y depending on parameter
  */
-uint8_t TS_SendReceive(uint8_t tx_byte)
+uint16_t TS_SendReceive(uint8_t tx_byte)
 {
+	uint8_t discard = 0;
 	uint8_t rx_byte = 0;
+	uint8_t temp = 0;
+
+
 
 	// Select Slave (CS -> Low)
 	GPIOB->BSRR |= GPIO_BSRR_BR_12;
 
 	// make sure TXE (Transmit Buffer Empty) is set before sending data
-	while((SPI1->SR & SPI_SR_TXE_Msk) == 0);
+	while((SPI2->SR & SPI_SR_TXE_Msk) == 0);
 
 	// send tx_byte
-	*(__IO uint8_t *)&SPI1->DR = tx_byte;
+	*(__IO uint8_t *)&SPI2->DR = tx_byte;
+
+	// make sure TXE (Transmit Buffer Empty) is set before taking in data
+	while((SPI2->SR & SPI_SR_TXE_Msk) == 0);
 
 	// Wait until incoming data has arrived
-	while((SPI1->SR & SPI_SR_RXNE_Msk) == 0);
+	while((SPI2->SR & SPI_SR_RXNE_Msk) == 0);
 
 	// Read data
-	rx_byte = *(__IO uint8_t *)&SPI1->DR;
+	discard = *(__IO uint8_t *)&SPI2->DR;		// dummy read, not important
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// make sure TXE (Transmit Buffer Empty) is set before sending data
+	while((SPI2->SR & SPI_SR_TXE_Msk) == 0);
+
+	// send dummy bytes
+	*(__IO uint8_t *)&SPI2->DR = 0x00;
+
+	// make sure TXE (Transmit Buffer Empty) is set before sending data
+	while((SPI2->SR & SPI_SR_TXE_Msk) == 0);
+
+	// Wait until incoming data has arrived
+	while((SPI2->SR & SPI_SR_RXNE_Msk) == 0);
+
+	// Read data
+	rx_byte = *(__IO uint8_t *)&SPI2->DR;		// actual read, return this data
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// make sure TXE (Transmit Buffer Empty) is set before sending data
+	while((SPI2->SR & SPI_SR_TXE_Msk) == 0);
+
+	// send dummy bytes
+	*(__IO uint8_t *)&SPI2->DR = 0x00;
+
+	// make sure TXE (Transmit Buffer Empty) is set before sending data
+	while((SPI2->SR & SPI_SR_TXE_Msk) == 0);
+
+	// Wait until incoming data has arrived
+	while((SPI2->SR & SPI_SR_RXNE_Msk) == 0);
+
+	// Read data
+	temp = *(__IO uint8_t *)&SPI2->DR;		// actual read, return this data
+
+	//rx_byte += temp;
 
 	// Release slave (CS -> High)
 	GPIOB->BSRR |= GPIO_BSRR_BS_12;
 
-	return rx_byte;
+	uint16_t result = (((uint16_t)rx_byte << 8) | temp) >> 3;   // 12-bit value, 0-4095
+
+	return result;
 }
