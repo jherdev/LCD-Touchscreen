@@ -11,6 +11,11 @@
 #include "stm32f0xx.h"
 
 /*
+ * 	Clock Configuration
+ */
+void SystemClock_Config (void);
+
+/*
  *	LCD SPI Functions
  */
 void BSP_SPI1_Init(void);
