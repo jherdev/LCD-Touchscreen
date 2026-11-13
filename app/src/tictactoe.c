@@ -207,10 +207,10 @@ bool TTT_CheckWinner(char grid[3][3])
  */
 void TTT_Game(void)
 {
-	uint8_t turn = 0;			// tracks turn number
-	uint8_t state = 0;			// tracks game state
+	uint8_t turn = 1;			// tracks turn number
 	uint8_t player = 0;			// 0 = O player turn, 1 = X player turn
 	bool winner = false;		// indicates a winner has been determined when TRUE
+	bool gameover = false; 		// when true, indicates game is over
 	uint16_t x_coordinate = 0;
 	uint16_t y_coordinate = 0;
 	uint8_t x_grid = 0;
@@ -220,99 +220,82 @@ void TTT_Game(void)
 	LCD_Clear(TFT_RED);			// set the entire LCD Screen to red
 	TTT_DrawGrid();				// draws 3x3 Tic Tac Toe Grid
 
-	while(state < 3)
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+
+	while(!gameover)
 	{
-		switch(state)
+		if(TouchScreenPressed())
 		{
-			case 0:							// game start, all we've done is initalize game
-				while(TouchScreenPressed() == 0);	// loop here until initial player input
-				turn = 1;	// initialize game turn
-				state = 1;	// initialize game state
-				break;
-			case 1:					// loop input mode,
-				if(TouchScreenPressed())
+			// retrieve x and y
+			x_coordinate = TS_SendReceive(TS_CMD_X);
+			y_coordinate = TS_SendReceive(TS_CMD_Y);
+
+			// convert to touch screen x and y
+			x_coordinate = (x_coordinate - 160) / 7.25;	// accounts for offset and converts to 0 - 240
+			y_coordinate = (y_coordinate - 190) / 5.4;	// accounts for offset and converts to 0 - 320
+
+			// convert to grid
+			x_grid = CoordToGridX(x_coordinate);
+			y_grid = CoordToGridY(y_coordinate);
+
+			// check if valid input
+			if(ttt_grid[x_grid][y_grid] == '\0')	// if valid input
+			{
+				switch(player)
 				{
-					// retrieve x and y
-					x_coordinate = TS_SendReceive(TS_CMD_X);
-					y_coordinate = TS_SendReceive(TS_CMD_Y);
+					case 0:
+						TTT_DrawO(x_grid, y_grid);			// draw O
+						ttt_grid[x_grid][y_grid] = 'O';		// update grid
+						break;
+					case 1:
+						TTT_DrawX(x_grid, y_grid);			// draw X
+						ttt_grid[x_grid][y_grid] = 'X';		// update grid
+						break;
+					default:
+						// error
+						break;
+				}
 
-					// convert to touch screen x and y
-					x_coordinate = (x_coordinate - 160) / 7.25;	// accounts for offset and converts to 0 - 240
-					y_coordinate = (y_coordinate - 190) / 5.4;	// accounts for offset and converts to 0 - 320
+				winner = TTT_CheckWinner(ttt_grid);		// check for winner
 
-					// convert to grid
-					x_grid = CoordToGridX(x_coordinate);
-					y_grid = CoordToGridY(y_coordinate);
+				if(winner || turn >= 9)
+				{
+					gameover = true;
+				}
+				else
+				{
+					player ^= 1;	// toggle player turn
+					turn++;			// update game turn
+				}
+			}
+			DELAY_ms(500);	// wait 1/2 second for a viable input
+		}
+	}
 
-					// check if valid input
-					if(ttt_grid[x_grid][y_grid] == '\0')	// if valid input
-					{
-						if(player)	// if player X
-						{
-							TTT_DrawX(x_grid, y_grid);			// draw X
-							ttt_grid[x_grid][y_grid] = 'X';		// update grid
-						}
-						else		// else player O
-						{
-							TTT_DrawO(x_grid, y_grid);			// draw O
-							ttt_grid[x_grid][y_grid] = 'O';		// update grid
-						}
-
-						DELAY_ms(1000);		// 1 second delay between viable inputs
-
-						if(turn >= 5)
-						{
-							winner = TTT_CheckWinner(ttt_grid);
-						}
-
-						if(winner || turn >= 9)	// if there's a winner (TRUE), move on
-						{
-							state = 2;
-							// do not update player turn, current player won or no one did
-						}
-						else		// else, update and go through another turn
-						{
-							player ^= 1;	// toggle player turn
-							turn++;			// update game turn
-						}
-					}
-					DELAY_ms(800);	// wait 1 second for a viable input
+	if(winner)
+	{
+		switch(player)
+		{
+			case 0:
+				for(int i = 0; i < 200; i++)
+				{
+					LCD_DrawFillCircle(120, 160, 50 + i, false, TFT_BLACK);
 				}
 				break;
-			case 2:
-				if(winner)
+			case 1:
+				for(int r = 0; r < 100; r++)
 				{
-					if(player)	// if player X won
-					{
-						for(int r = 0; r < 100; r++)
-						{
-							LCD_DrawLine(60+r, 60, 180+r, 260);
-							LCD_DrawLine(180+r, 60, 60+r, 260);
-						}
-					}
-					else		// player O won
-					{
-						for(int i = 0; i < 100; i++)
-						{
-							LCD_DrawFillCircle(120, 160, 100 + i, false, TFT_BLACK);
-						}
-					}
-					LCD_Clear(TFT_WHITE);
-					DELAY_ms(2000);
+					LCD_DrawLine(60+r, 60, 180+r, 260);
+					LCD_DrawLine(180+r, 60, 60+r, 260);
 				}
-				else	// 9 turns played out and no one won
-				{
-					// output no winner
-					LCD_Clear(TFT_ORANGE);			// set the entire LCD Screen to red
-					DELAY_ms(2000);					// delay for 2 seconds on orange screen
-				}
-				state++;
 				break;
 			default:
-				// some manner of error handling here
+				// error
 				break;
 		}
 	}
+	LCD_Clear(TFT_WHITE);
+	DELAY_ms(2000);
 }
 
 
