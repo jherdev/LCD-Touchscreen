@@ -82,10 +82,13 @@ void LCD_WR_DATA_16Bit(uint16_t data)
 	GPIOC->BSRR |= GPIO_BSRR_BS_9;
 
 	// Write to SPI1 Buffer
-	SPI1->DR = (data >> 8);
-	// *(__IO uint8_t *)&SPI1->DR = (data >> 8);
-	SPI1->DR = data;
-	//*(__IO uint8_t *)&SPI1->DR = data;
+	 *(__IO uint8_t *)&SPI1->DR = (data >> 8);
+
+	// make sure TXE is set before continuing // TXE = 1, indicating Tx buffer empty
+	while ((SPI1->SR & SPI_SR_TXE_Msk) == 0);
+
+	// Write to SPI1 Buffer
+	*(__IO uint8_t *)&SPI1->DR = data;
 
 	//wait until full transmisssion before continuing
 	// make sure TXE is set before continuing // TXE = 1, indicating Tx buffer empty

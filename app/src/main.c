@@ -15,8 +15,6 @@
 
 int main()
 {
-	//uint16_t x = 0, y = 0;
-
 	SystemClock_Config();		// calls the clock configuration function
 	BSP_SPI1_Init();			// configure SPI1 for LCD Screen
 	BSP_SPI2_Init();			// configure SPI2 for Touch Screen
@@ -25,20 +23,8 @@ int main()
 	LCD_Reset();				// Reset LCD Screen
 	LCD_Init();					// Initialize LCD Screen as per the User Manual
 
-	LCD_Clear(TFT_WHITE);
-	DELAY_ms(2000);
-	LCD_Clear(TFT_NAVY);
-	DELAY_ms(2000);
-	LCD_Clear(TFT_YELLOW);
-	DELAY_ms(2000);
-	LCD_Clear(TFT_DARKGREEN);
-	DELAY_ms(2000);
-	LCD_Clear(TFT_PINK);
-
 	while(1)
 	{
 		TTT_Game();
-
-
 	}
 }
