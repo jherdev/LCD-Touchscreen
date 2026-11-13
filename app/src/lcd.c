@@ -215,7 +215,7 @@ void LCD_Init(void)
 
 	LCD_WR_CMD(0x29); 		// display on
 
-	LCD_Direction(2);		// 180 degrees
+	LCD_Direction(4);		// 0,0 @ top left of screen
 }
 
 /*
@@ -446,23 +446,26 @@ void LCD_DrawCircle(int xOrigin, int yOrigin, int x, int y, uint16_t color)
  */
 void LCD_Direction(uint8_t orientation)
 {
+	LCD_WR_CMD(TFT_MADCTL);		// 0x36 // Memory Access Control
 	switch(orientation)
 	{
-		case 0:
-			LCD_WR_CMD(TFT_MADCTL);		// 0x36 // Memory Access Control
+		case 0:	// 0 degree rotation
 			LCD_WR_DATA(TFT_MAD_BGR);	// BGR = 1, MY = 0, MX = 0, MV = 0
 			break;
-		case 1:
-			LCD_WR_CMD(TFT_MADCTL);		// 0x36 // Memory Access Control
+		case 1:	// 90 degree rotation
 			LCD_WR_DATA(TFT_MAD_BGR | TFT_MAD_MX | TFT_MAD_MV); // BGR = 1, MY = 0, MX = 1, MV = 1
 			break;
-		case 2:
-			LCD_WR_CMD(TFT_MADCTL);		// 0x36 // Memory Access Control
+		case 2:	// 180 degree rotation
 			LCD_WR_DATA(TFT_MAD_BGR | TFT_MAD_MY | TFT_MAD_MX);	// BGR = 1, MY = 1, MX = 1, MV = 0
 			break;
-		case 3:
-			LCD_WR_CMD(TFT_MADCTL);		// 0x36 // Memory Access Control
+		case 3:	// 270 degree rotation
 			LCD_WR_DATA(TFT_MAD_BGR | TFT_MAD_MY | TFT_MAD_MV);	// BGR = 1, MY = 1, MX = 0, MV = 1
+			break;
+		case 4:	// flip x axis
+			LCD_WR_DATA(TFT_MAD_BGR | TFT_MAD_MY);	// BGR = 1, MY = 1, MX = 0, MV = 0
+			break;
+		default:
+			// error
 			break;
 	}
 }
